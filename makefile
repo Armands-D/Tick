@@ -1,19 +1,28 @@
 FILES = main.c
 FLAGS = -Wall -Werror -fstack-protector -fsanitize=leak -fsanitize=address
-OUT = tick
+BIN = tick
+OUT = task.list
 ARGS = add do my laundry
 CC = gcc
 
-all: compile run clean
+all: compile wipe run read clean
 
 compile: $(FILES)
-	$(CC) $(FILES) -o $(OUT) $(FLAGS)
+	$(CC) $(FILES) -o $(BIN) $(FLAGS)
 
-run: $(OUT)
-	-./$(OUT) $(ARGS)
+wipe: $(OUT).bak
+	cat $(OUT).bak > $(OUT)
 
-clean: $(OUT)
-	rm $(OUT)
+run: $(BIN)
+	-./$(BIN) $(ARGS)
 
-.PHONY: clean
+read: $(OUT)
+	@echo "--- TASK LIST START ---"
+	@cat $(OUT)
+	@echo "---  TASK LIST END  ---"
+
+clean: $(BIN)
+	rm $(BIN)
+
+.PHONY: wipe read clean
 

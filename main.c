@@ -8,11 +8,6 @@
 #define RESET_COLOUR "\e[0m"
 #define RED_COLOUR "\e[0;31m"
 
-struct Task{
-  int number;
-  char* entry;
-};
-
 void pError(char* str){
   printf("%sError:\n%s\n%s", RED_COLOUR, str, RESET_COLOUR);
 }
@@ -46,7 +41,8 @@ int addTask(int argc, char* args[]){
     return 1;
   }
   char* entry = join(argc, args);
-  printf("Joined = '%s'\n", entry);
+  printf("Joined args = '%s'\n", entry);
+  fprintf(file_ptr, "TASK: %s\n", entry);
   free(entry);
   fclose(file_ptr);
   return 0;
