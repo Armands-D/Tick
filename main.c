@@ -29,6 +29,10 @@ int addTask(int argc, char* args[]){
     return 1;
   }
   char* entry = joinArgs(argc, args);
+  if(argc < 3){
+    pError("Cannot add empty task");
+    return 1;
+  }
   printf("Joined Args:\n%s\n", entry);
   fclose(file_ptr);
   return 0;
