@@ -1,15 +1,16 @@
 FILES = main.c
 FLAGS = -Wall -Werror -fstack-protector -fsanitize=leak -fsanitize=address
-OUT = main
+OUT = tick
+ARGS = add
 CC = gcc
 
-all: clean compile run clean
+all: compile run clean
 
 compile: $(FILES)
 	$(CC) $(FILES) -o $(OUT) $(FLAGS)
 
 run: $(OUT)
-	-./$(OUT)
+	-./$(OUT) $(ARGS)
 
 clean: $(OUT)
 	rm $(OUT)
