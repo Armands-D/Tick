@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -16,8 +17,20 @@ void pError(char* str){
   printf("%sError:\n%s\n%s", RED_COLOUR, str, RESET_COLOUR);
 }
 
-char* joinArgs(int argc, char* args[]){
-  char* str = NULL;
+char* join(int argc, char* args[]){
+  int str_size = 1;
+  char* str = (char*)calloc(str_size, sizeof(char));
+  for(int i = 2; i < argc; i ++){
+    char* arg = args[i];
+    int arg_size = strlen(arg) + 1;
+    str_size +=  arg_size;
+    str = (char *)realloc(str, str_size);
+    printf("Arg Size: %d\nStr Alloc Size: %d\n\n", arg_size, str_size);
+    str = strcat(str, arg);
+    str = strcat(str, " ");
+  }
+  str[str_size - 2] = '\0'; // Remove space at the end
+  str = (char*)realloc(str, str_size - 1);
   return str;
 }
 
@@ -28,12 +41,13 @@ int addTask(int argc, char* args[]){
     pError("Unable to create task list file");
     return 1;
   }
-  char* entry = joinArgs(argc, args);
   if(argc < 3){
     pError("Cannot add empty task");
     return 1;
   }
-  printf("Joined Args:\n%s\n", entry);
+  char* entry = join(argc, args);
+  printf("Joined = '%s'\n", entry);
+  free(entry);
   fclose(file_ptr);
   return 0;
 }
