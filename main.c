@@ -17,12 +17,12 @@ char* join(int argc, char* args[]){
   char* str = (char*)calloc(str_size, sizeof(char));
   for(int i = 2; i < argc; i ++){
     char* arg = args[i];
-    int arg_size = strlen(arg) + 1;
-    str_size +=  arg_size;
+    int arg_size = strlen(arg);
+    str_size +=  arg_size + 1;
     str = (char *)realloc(str, str_size);
-    printf("Arg Size: %d\nStr Alloc Size: %d\n\n", arg_size, str_size);
     str = strcat(str, arg);
     str = strcat(str, " ");
+    printf("Str: '%s'\nArg Size: %d\nStr Alloc Size: %d\n\n",str, arg_size, str_size);
   }
   str[str_size - 2] = '\0'; // Remove space at the end
   str = (char*)realloc(str, str_size - 1);
@@ -41,19 +41,65 @@ int addTask(int argc, char* args[]){
     return 1;
   }
   char* entry = join(argc, args);
-  printf("Joined args = '%s'\n", entry);
   fprintf(file_ptr, "TASK: %s\n", entry);
   free(entry);
   fclose(file_ptr);
   return 0;
 }
 
+int readTasks(char** task_array, int size){
+  if(task_array == NULL){
+    //char** task_array = (char**)calloc(0, sizeof(char));
+  }
+  FILE *file_ptr;
+  file_ptr = fopen(TASK_FILE_PATH, "r");
+  if(file_ptr == NULL){
+    pError("Unable to create task list file");
+    return 1;
+  }
+
+  char c;
+  int ln_size = 1;
+  char *line = (char*)calloc(ln_size, sizeof(char));
+  while(((c = fgetc(file_ptr)) != EOF)){
+    if(c != '\n'){
+      ln_size ++;
+      line = (char*)realloc(line, ln_size);
+      line[ln_size - 1] = '\0';
+      line[ln_size - 2] = c;
+      printf("ReadChar: %c\n", c);
+    }else{
+      printf("ReadLine: '%s'\n", line);
+      free(line);
+      ln_size = 1;
+      line = (char*)calloc(ln_size, sizeof(char));
+    }
+  }
+  free(line);
+  fclose(file_ptr);
+  return 0;
+}
+
+int printTasks(){
+  char** task_arr = (char**)calloc(0, sizeof(char));
+  int ta_size = 0;
+  int status = readTasks(task_arr, ta_size);
+  if(status){
+    free(task_arr);
+    return status;
+  }
+  free(task_arr);
+  return status;
+}
+
 int main(int argc, char *argv[]){
   int STATUS = 0;
-  if(argc){
+  if(argc > 1){
     if(strcmp(argv[1], ADD_CMD) == 0){
       STATUS = addTask(argc, argv);
     }
+  }else{
+    STATUS = printTasks();
   }
   return STATUS;
 }

@@ -2,10 +2,11 @@ FILES = main.c
 FLAGS = -Wall -Werror -fstack-protector -fsanitize=leak -fsanitize=address
 BIN = tick
 OUT = task.list
-ARGS = add do my laundry
+ARGS ?=
+ARGS ?= add do my laundry
 CC = gcc
 
-all: compile wipe run read clean
+all: compile run read clean
 
 compile: $(FILES)
 	$(CC) $(FILES) -o $(BIN) $(FLAGS)
